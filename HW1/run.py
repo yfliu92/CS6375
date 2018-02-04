@@ -32,11 +32,13 @@ def main(args):
     rd = ReadData()
     labels, training_set = rd.createDataSet(path + training_set_file_name)
     labels, validation_set = rd.createDataSet(path + validation_set_file_name)
-    lables, test_set = rd.createDataSet(path + test_set_file_name)
+    labels, test_set = rd.createDataSet(path + test_set_file_name)
 
+    used_labels = []
+    print(used_labels)
     # build tree
     information_gain_tree = InformationGainHeuristicDT()
-    information_gain_tree.buildDT(training_set, labels)
+    information_gain_tree.buildDT(training_set, labels, used_labels)
 
 
 if __name__ == "__main__":

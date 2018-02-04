@@ -6,9 +6,21 @@
 import csv
 
 
-class ReadData():
-    def createDataSet(self, fileName):
-        with open(fileName) as f:
+class ReadData(object):
+
+    def createDataSet(self, file_name):
+        """Read data from CSV file.
+
+        Args:
+            file_name: the name of file needed to be load
+
+        Returns:
+            labels: a list contains all the attributes names.
+            ret: a list contains all the values
+
+        """
+
+        with open(file_name) as f:
             reader = csv.reader(f)
             data = list(reader)
 

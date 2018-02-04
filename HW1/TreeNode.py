@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-class TreeNode():
+class TreeNode(object):
+    """Build tree node
+    """
+
     def __init__(self, val):
         pass
