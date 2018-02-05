@@ -7,7 +7,6 @@ import sys
 
 from ReadData import ReadData
 from DecisionTree import DecisionTree
-from InformationGainHeuristicDT import InformationGainHeuristicDT
 
 # data_set directory
 DATA_DIRECTORY = 'data_sets1'
@@ -15,7 +14,7 @@ DATA_DIRECTORY = 'data_sets1'
 
 def main(args):
     # judge input arguments length
-    if (len(args) != 6):
+    if len(args) != 6:
         print('Should Have Six Input Arguments')
         exit(0)
 
@@ -25,7 +24,7 @@ def main(args):
     training_set_file_name = args[2]
     validation_set_file_name = args[3]
     test_set_file_name = args[4]
-    to_print = True if args[5].lower() == 'true' else False
+    to_print = True if args[5].lower() == 'YES' else False
 
     path = './' + DATA_DIRECTORY + '/'
 
@@ -50,10 +49,10 @@ def main(args):
 
     print()
     info_accuracy = dt.calAccuracy(test_set, info_gain_tree_root, labels)
-    print('Accuracy: %s' %info_accuracy)
+    print('Accuracy of decision tree constructed using information gain: %s' %info_accuracy)
 
     vari_accuracy = dt.calAccuracy(test_set, variance_impurity_tree_root, labels)
-    print('Accuracy: %s' % vari_accuracy)
+    print('Accuracy of decision tree constructed using variance impurity: %s' % vari_accuracy)
 
 
 
