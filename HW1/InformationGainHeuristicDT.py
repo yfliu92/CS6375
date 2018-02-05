@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'Build Tree Using Information Gain'
+'Build Tree Using Information Gain, Unuseful file'
 
 from TreeNode import TreeNode
 from Utilities import Utilities

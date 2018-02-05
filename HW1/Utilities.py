@@ -21,7 +21,6 @@ class Utilities(object):
         best_classifier_index = -1
 
         for i in range(len(labels) - 1):
-
             values = data_map[labels[i]]
             one = [0, 0]
             zero = [0, 0]
@@ -117,7 +116,7 @@ class Utilities(object):
         zero_count = zero[0] + zero[1]
         zero_entropy = Utilities.calEntropy(zero[0], zero[1])
 
-        info_gain = total_entropy - (one_count / total_count) * one_entropy - (zero_count / total_count) * zero_entropy
+        info_gain = total_entropy - ((one_count / total_count) * one_entropy + (zero_count / total_count) * zero_entropy)
         return info_gain
 
     @staticmethod
@@ -154,7 +153,7 @@ class Utilities(object):
         vi_x1 = Utilities.calImpurity(K1)
         p1 = (K1[0] + K1[1]) / K
 
-        ret = vi_s - p0 * vi_x0 - p1 * vi_x1
+        ret = vi_s - (p0 * vi_x0 + p1 * vi_x1)
 
         return ret
 
