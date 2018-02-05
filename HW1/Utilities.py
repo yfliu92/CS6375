@@ -93,22 +93,22 @@ class Utilities(object):
                     map[label].append(row[i])
                 else:
                     map[label] = [row[i]]
-
         return map
 
     @staticmethod
     def calEntropy(negative, positive):
-        total = positive + negative
+        total = float(positive + negative)
         if positive == negative:
-            return 1
+            return 1.0
         if positive == 0 or negative == 0:
-            return 0
+            return 0.0
+
         entropy = -(positive / total) * math.log2(positive / total) - (negative / total) * math.log2(negative / total)
         return entropy
 
     @staticmethod
     def calEntropyGain(total, zero, one):
-        total_count = total[0] + total[1]
+        total_count = float(total[0] + total[1])
         total_entropy = Utilities.calEntropy(total[0], total[1])
 
         one_count = one[0] + one[1]
@@ -144,7 +144,8 @@ class Utilities(object):
 
     @staticmethod
     def calImpurityGain(total, K0, K1):
-        K = total[0] + total[1]
+        K = float(total[0] + total[1])
+
         vi_s = Utilities.calImpurity(total)
 
         vi_x0 = Utilities.calImpurity(K0)
@@ -159,7 +160,7 @@ class Utilities(object):
 
     @staticmethod
     def calImpurity(K):
-        total = K[0] + K[1]
+        total = float(K[0] + K[1])
         if total == 0:
             return 0
         return K[0] / total * K[1] / total
