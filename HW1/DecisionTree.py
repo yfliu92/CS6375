@@ -16,6 +16,7 @@ class DecisionTree(object):
         # data_set contains only 'Class' values
         if len(data_set[0]) == 1 and labels[0] == 'Class':
             return TreeNode(is_leaf=True, val=Utilities.getMajorityValue(data_set))
+
         # all results from class
         class_list = [item[-1] for item in data_set]
 
@@ -39,18 +40,20 @@ class DecisionTree(object):
 
         return TreeNode(is_leaf=False, left=left, right=right, name=best_classifier)
 
+
     def calAccuracy(self, data_set, node, labels):
         count = 0
         for row in data_set:
             if self.checkOutput(row, node, labels):
                 count += 1
 
-        return count/len(data_set) * 100
+        return count / len(data_set) * 100
+
 
     def checkOutput(self, row, node, labels):
         result = row[-1]
         head = node
-        while(True):
+        while (True):
             if head.isLeaf():
                 if head.getVal() == result:
                     return True
@@ -62,8 +65,3 @@ class DecisionTree(object):
                     head = head.getLeft()
                 else:
                     head = head.getRight()
-
-
-
-
-
