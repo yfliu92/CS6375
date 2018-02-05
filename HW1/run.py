@@ -34,12 +34,11 @@ def main(args):
     labels, validation_set = rd.createDataSet(path + validation_set_file_name)
     labels, test_set = rd.createDataSet(path + test_set_file_name)
 
-    used_labels = []
-    print(used_labels)
+    # used_labels = []
     # build tree
     information_gain_tree = InformationGainHeuristicDT()
-    information_gain_tree.buildDT(training_set, labels, used_labels)
-
+    info_gain_tree_root = information_gain_tree.buildDT(training_set, labels)
+    print(info_gain_tree_root)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

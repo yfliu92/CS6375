@@ -9,18 +9,17 @@ import operator
 
 class Utilities(object):
     @staticmethod
-    def getBestClassifier(data_set, labels, used_labels):
-
-        bestClassifier = None
+    def getBestClassifier(data_set, labels):
 
         # get data map, key: attribute, value: list contains all corresponding values
-        data_map = Utilities.getDataMap(data_set, labels, used_labels)
+        data_map = Utilities.getDataMap(data_set, labels)
         # get all values of 'Class'
         class_values = data_map['Class']
 
         total = [class_values.count('0'), class_values.count('1')]
-        # map to store information gain for every attribute
-        info_gain_map = {}
+
+        max_info_gain = 0.0
+        best_classifier_index = -1
 
         for i in range(len(labels) - 1):
 
@@ -40,20 +39,17 @@ class Utilities(object):
                         zero[0] += 1
 
             info_gain = Utilities.calEntropyGain(total, zero, one)
-            info_gain_map[labels[i]] = info_gain
 
-        # sort map with values in descending order
-        sorted_info_gain_map = sorted(info_gain_map.items(), key=operator.itemgetter(1), reverse=True)
+            if info_gain > max_info_gain:
+                max_info_gain = info_gain
+                best_classifier_index = i
 
-        return sorted_info_gain_map[0][0]
+        return best_classifier_index
 
     @staticmethod
-    def getDataMap(data_set, labels, used_labels):
+    def getDataMap(data_set, labels):
         map = {}
         for i, label in enumerate(labels):
-
-            if label in used_labels: continue
-
             for row in data_set:
                 if label in map:
                     map[label].append(row[i])
@@ -88,18 +84,12 @@ class Utilities(object):
 
     @staticmethod
     def splitDataSet(data_set, index):
-        ret = {}
+        ret = {
+            '0': [],
+            '1': []
+        }
         for row in data_set:
-            if row[index] == '1':
-                if '1' in ret:
-                    ret['1'].append(row)
-                else:
-                    ret['1'] = [row]
-
-            else:
-                if '0' in ret:
-                    ret['0'].append(row)
-                else:
-                    ret['0'] = [row]
-
+            reduced_row = row[:index]
+            reduced_row.extend(row[index + 1:])
+            ret[row[index]].append(reduced_row)
         return ret
