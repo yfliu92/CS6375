@@ -9,7 +9,7 @@ import operator
 
 class Utilities(object):
     @staticmethod
-    def getBestClassifier(data_set, labels):
+    def getBestClassifierByEntropy(data_set, labels):
 
         # get data map, key: attribute, value: list contains all corresponding values
         data_map = Utilities.getDataMap(data_set, labels)
@@ -17,7 +17,6 @@ class Utilities(object):
         class_values = data_map['Class']
 
         total = [class_values.count('0'), class_values.count('1')]
-
         max_info_gain = 0.0
         best_classifier_index = -1
 
@@ -42,6 +41,45 @@ class Utilities(object):
 
             if info_gain > max_info_gain:
                 max_info_gain = info_gain
+                best_classifier_index = i
+
+        return best_classifier_index
+
+    @staticmethod
+    def getBestClassifierByVariance(data_set, labels):
+        # get data map, key: attribute, value: list contains all corresponding values
+        data_map = Utilities.getDataMap(data_set, labels)
+
+        # get all values of 'Class'
+        class_values = data_map['Class']
+        K0 = class_values.count('0')
+        K1 = class_values.count('1')
+        total = [K0, K1]
+
+        max_gain = 0.0
+        best_classifier_index = -1
+
+        for i in range(len(labels) - 1):
+
+            values = data_map[labels[i]]
+            K0 = [0, 0]
+            K1 = [0, 0]
+            for idx, val in enumerate(values):
+                if val == '0':
+                    if class_values[idx] == '0':
+                        K0[0] += 1
+                    else:
+                        K0[1] += 1
+                else:
+                    if class_values[idx] == '0':
+                        K1[0] += 1
+                    else:
+                        K1[1] += 1
+
+            gain = Utilities.calImpurityGain(total, K0, K1)
+
+            if gain > max_gain:
+                max_gain = gain
                 best_classifier_index = i
 
         return best_classifier_index
@@ -93,3 +131,35 @@ class Utilities(object):
             reduced_row.extend(row[index + 1:])
             ret[row[index]].append(reduced_row)
         return ret
+
+    @staticmethod
+    def getMajorityValue(data_set):
+        count = {}
+        for i in data_set:
+            if i not in count: count[i] = 0
+            count[i] += 1
+
+        sorted_count = sorted(count.items(), key=operator.itemgetter(1), reverse=True)
+        return sorted_count[0][0]
+
+    @staticmethod
+    def calImpurityGain(total, K0, K1):
+        K = total[0] + total[1]
+        vi_s = Utilities.calImpurity(total)
+
+        vi_x0 = Utilities.calImpurity(K0)
+        p0 = (K0[0] + K0[1]) / K
+
+        vi_x1 = Utilities.calImpurity(K1)
+        p1 = (K1[0] + K1[1]) / K
+
+        ret = vi_s - p0 * vi_x0 - p1 * vi_x1
+
+        return ret
+
+    @staticmethod
+    def calImpurity(K):
+        total = K[0] + K[1]
+        if total == 0:
+            return 0
+        return K[0] / total * K[1] / total

@@ -6,10 +6,11 @@
 import sys
 
 from ReadData import ReadData
+from DecisionTree import DecisionTree
 from InformationGainHeuristicDT import InformationGainHeuristicDT
 
-# data_set name
-data_set = 'data_sets1'
+# data_set directory
+DATA_DIRECTORY = 'data_sets1'
 
 
 def main(args):
@@ -26,7 +27,7 @@ def main(args):
     test_set_file_name = args[4]
     to_print = True if args[5].lower() == 'true' else False
 
-    path = './' + data_set + '/'
+    path = './' + DATA_DIRECTORY + '/'
 
     # read data from training set, test set, and validation set
     rd = ReadData()
@@ -34,11 +35,27 @@ def main(args):
     labels, validation_set = rd.createDataSet(path + validation_set_file_name)
     labels, test_set = rd.createDataSet(path + test_set_file_name)
 
-    # used_labels = []
     # build tree
-    information_gain_tree = InformationGainHeuristicDT()
-    info_gain_tree_root = information_gain_tree.buildDT(training_set, labels)
-    print(info_gain_tree_root)
+    dt = DecisionTree()
+
+    info_gain_tree_root = dt.buildDT(training_set, labels.copy(), 'information_gain')
+    print('Build Decision Tree By Using Information Gain')
+    info_gain_tree_root.printTree()
+
+    variance_impurity_tree_root = dt.buildDT(training_set, labels.copy(), 'variance_impurity')
+
+    print()
+    print('Build Decision Tree By Using Variance Impurity')
+    variance_impurity_tree_root.printTree()
+
+    print()
+    info_accuracy = dt.calAccuracy(test_set, info_gain_tree_root, labels)
+    print('Accuracy: %s' %info_accuracy)
+
+    vari_accuracy = dt.calAccuracy(test_set, variance_impurity_tree_root, labels)
+    print('Accuracy: %s' % vari_accuracy)
+
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
