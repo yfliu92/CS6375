@@ -5,6 +5,8 @@
 
 from TreeNode import TreeNode
 from Utilities import Utilities
+import random
+from collections import deque
 
 
 class DecisionTree(object):
@@ -22,7 +24,7 @@ class DecisionTree(object):
 
         # If all the results in class list are '1' or '0', then just return
         if class_list.count(class_list[0]) == len(class_list):
-            return TreeNode(is_leaf=True, val=class_list[0])
+            return TreeNode(is_leaf=True, val=class_list[0], size=len(class_list))
 
         if method == 'information_gain':
             best_classifier_index = Utilities.getBestClassifierByEntropy(data_set, labels)
@@ -40,6 +42,88 @@ class DecisionTree(object):
 
         return TreeNode(is_leaf=False, left=left, right=right, name=best_classifier)
 
+    def pruneTree(self, root, L, K, data, labels):
+        best = self.copyTree(root)
+        accuracy = self.calAccuracy(data, best, labels)
+        for i in range(L):
+            d_quotation = self.copyTree(root)
+            M = random.randint(1, K)
+            for j in range(M):
+                N = self.calNonLeafCount(d_quotation)
+                if N > 1:
+                    P = random.randint(1, N)
+                    self.replaceSubtree(d_quotation, P)
+
+            accuracy_of_d_quotation = self.calAccuracy(data, d_quotation, labels)
+
+            if accuracy < accuracy_of_d_quotation:
+                best = d_quotation
+                accuracy = accuracy_of_d_quotation
+        return best
+
+    def replaceSubtree(self, node, P):
+        if not node.isLeaf():
+            if node.getNo() == P:
+                node.setLeaf(True)
+                node.setVal(self.getMajorityClass(node))
+                node.setLeft(None)
+                node.setRight(None)
+            else:
+                self.replaceSubtree(node.getLeft(), P)
+                self.replaceSubtree(node.getRight(), P)
+
+    def getMajorityClass(self, root):
+        size0 = 0
+        size1 = 0
+        dq = deque()
+        dq.append(root)
+        while dq:
+            node = dq.popleft()
+            if node:
+                if node.isLeaf():
+                    if node.getVal() == '0':
+                        size0 += node.getSize()
+                    else:
+                        size1 += node.getSize()
+                else:
+                    dq.append(node.getLeft())
+                    dq.append(node.getRight())
+
+        return '0' if size0 > size1 else '1'
+
+    def copyTree(self, old):
+        new = TreeNode()
+        if old.isLeaf():
+            new.setLeaf(True)
+            new.setVal(old.getVal())
+        else:
+            new.setName(old.getName())
+            if old.getLeft():
+                new.setLeft(self.copyTree(old.getLeft()))
+
+            if old.getRight():
+                new.setRight(self.copyTree(old.getRight()))
+
+        return new
+
+    # use BFS to calculate the count of non-leaf node in tree
+    def calNonLeafCount(self, root):
+        count = 0
+        dq = deque()
+        dq.append(root)
+        while dq:
+            temp = dq.popleft()
+            if not temp.isLeaf():
+                count += 1
+                temp.setNo(count)
+
+                if temp.getLeft():
+                    dq.append(temp.getLeft())
+
+                if temp.getRight():
+                    dq.append(temp.getRight())
+
+        return count
 
     def calAccuracy(self, data_set, node, labels):
         count = 0
@@ -48,7 +132,6 @@ class DecisionTree(object):
                 count += 1
 
         return count / len(data_set) * 100
-
 
     def checkOutput(self, row, node, labels):
         result = row[-1]

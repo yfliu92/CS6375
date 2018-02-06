@@ -38,21 +38,37 @@ def main(args):
     dt = DecisionTree()
 
     info_gain_tree_root = dt.buildDT(training_set, labels.copy(), 'information_gain')
-    print('Build Decision Tree By Using Information Gain')
-    info_gain_tree_root.printTree()
+    # info_gain_tree_root.printTree()
+    # print('after pruned')
+    pruned_info_gain_tree_root = dt.pruneTree(info_gain_tree_root, L, K, validation_set, labels)
+    # pruned_info_gain_tree_root.printTree()
 
     variance_impurity_tree_root = dt.buildDT(training_set, labels.copy(), 'variance_impurity')
-
-    print()
-    print('Build Decision Tree By Using Variance Impurity')
-    variance_impurity_tree_root.printTree()
+    pruned_variance_impurity_tree_root = dt.pruneTree(variance_impurity_tree_root, L, K, validation_set, labels)
 
     print()
     info_accuracy = dt.calAccuracy(test_set, info_gain_tree_root, labels)
     print('Accuracy of decision tree constructed using information gain: %s' %info_accuracy)
+    variance_accuracy = dt.calAccuracy(test_set, variance_impurity_tree_root, labels)
+    print('Accuracy of decision tree constructed using variance impurity: %s' % variance_accuracy)
 
-    vari_accuracy = dt.calAccuracy(test_set, variance_impurity_tree_root, labels)
-    print('Accuracy of decision tree constructed using variance impurity: %s' % vari_accuracy)
+    prune_info_accuracy = dt.calAccuracy(test_set, pruned_info_gain_tree_root, labels)
+    print('Accuracy of pruned decision tree constructed using information gain: %s' % prune_info_accuracy)
+
+    pruned_variance_accuracy = dt.calAccuracy(test_set, pruned_variance_impurity_tree_root, labels)
+    print('Accuracy of pruned decision tree constructed using variance impurity: %s' % pruned_variance_accuracy)
+    # print('Build Decision Tree By Using Information Gain')
+    # info_gain_tree_root.printTree()
+    # print()
+    # print('Build Decision Tree By Using Variance Impurity')
+    # variance_impurity_tree_root.printTree()
+    #
+    # print()
+    # info_accuracy = dt.calAccuracy(test_set, info_gain_tree_root, labels)
+    # print('Accuracy of decision tree constructed using information gain: %s' %info_accuracy)
+    #
+    # vari_accuracy = dt.calAccuracy(test_set, variance_impurity_tree_root, labels)
+    # print('Accuracy of decision tree constructed using variance impurity: %s' % vari_accuracy)
 
 
 
