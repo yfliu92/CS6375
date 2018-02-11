@@ -16,7 +16,6 @@ class TreeNode(object):
         self.__no = -1
         self.__size = size
 
-
     def getLeft(self):
         return self.__left
 

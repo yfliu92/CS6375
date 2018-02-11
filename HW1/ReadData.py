@@ -7,7 +7,6 @@ import csv
 
 
 class ReadData(object):
-
     def createDataSet(self, file_name):
         """Read data from CSV file.
 

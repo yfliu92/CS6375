@@ -116,7 +116,8 @@ class Utilities(object):
         zero_count = zero[0] + zero[1]
         zero_entropy = Utilities.calEntropy(zero[0], zero[1])
 
-        info_gain = total_entropy - ((one_count / total_count) * one_entropy + (zero_count / total_count) * zero_entropy)
+        info_gain = total_entropy - (
+            (one_count / total_count) * one_entropy + (zero_count / total_count) * zero_entropy)
         return info_gain
 
     @staticmethod
