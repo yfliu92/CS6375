@@ -9,16 +9,26 @@ class NaiveBayesClassifier:
     TRAIN_PATH = 'train'
     TEST_PATH = 'test'
 
-    def __init__(self):
+    def __init__(self, use_stop_words):
         self.ham_words_map = {}
         self.spam_words_map = {}
         self.words_space_set = None
         self.ham_count = 0
         self.spam_count = 0
+        self.stop_words = []
+        self.use_stop_words = use_stop_words
 
     def train(self):
         self.spam_count, spam_list = self.initList(self.TRAIN_PATH + '/spam')
         self.ham_count, ham_list = self.initList(self.TRAIN_PATH + '/ham')
+
+        if self.use_stop_words:
+            self.stop_words = self.readStopWords()
+            for word in self.stop_words:
+                if word in spam_list:
+                    spam_list.remove(word)
+                if word in ham_list:
+                    ham_list.remove(word)
 
         spam_words_len = len(spam_list)
         ham_words_len = len(ham_list)
@@ -28,7 +38,8 @@ class NaiveBayesClassifier:
 
         self.ham_words_map = self.initMap(ham_list)
         self.spam_words_map = self.initMap(spam_list)
-
+        print(self.ham_words_map)
+        print(self.spam_words_map)
         spam_total_count = spam_words_len + words_space_len
         ham_total_count = ham_words_len + words_space_len
 
@@ -60,6 +71,13 @@ class NaiveBayesClassifier:
 
             ham_prop = math.log2(self.ham_count * 1.0 / (self.ham_count + self.spam_count))
             spam_prop = math.log2(self.spam_count * 1.0 / (self.ham_count + self.spam_count))
+
+            # delete stop_words from list
+            if self.use_stop_words:
+                for word in self.stop_words:
+                    if word in temp:
+                        temp.remove(word)
+
             for word in temp:
                 if word in self.spam_words_map:
                     spam_prop += self.spam_words_map[word]
@@ -91,6 +109,13 @@ class NaiveBayesClassifier:
 
             ham_prop = math.log2(self.ham_count * 1.0 / (self.ham_count + self.spam_count))
             spam_prop = math.log2(self.spam_count * 1.0 / (self.ham_count + self.spam_count))
+
+            # delete stop_words from list
+            if self.use_stop_words:
+                for word in self.stop_words:
+                    if word in temp:
+                        temp.remove(word)
+
             for word in temp:
                 if word in self.spam_words_map:
                     spam_prop += self.spam_words_map[word]
@@ -107,7 +132,9 @@ class NaiveBayesClassifier:
 
         ham_success_ratio = after_classify_ham * 1.0 / test_ham_count
 
-        return spam_success_ratio, ham_success_ratio
+        total_success_ratio = (after_classify_spam + after_classify_ham) * 1.0 / (test_spam_count + test_ham_count)
+
+        return spam_success_ratio, ham_success_ratio, total_success_ratio
 
 
     def initMap(self, words_list):
@@ -133,3 +160,9 @@ class NaiveBayesClassifier:
                 msg = msg + temp
 
         return len(file_content), msg
+
+    def readStopWords(self):
+        with open('stop_words.txt') as f:
+            temp = f.read().lower().replace('\n', ' ').split(' ')
+
+        return temp
