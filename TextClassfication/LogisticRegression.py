@@ -66,7 +66,6 @@ class LogisticRegression:
 
                 self.WEIGHTS[word] += (
                         self.learning_rate * sum - float(self._lambda) * self.learning_rate * self.WEIGHTS[word])
-        print(self.WEIGHTS)
 
     def classify(self):
 
@@ -82,7 +81,6 @@ class LogisticRegression:
 
         # delete empty string
         if '' in self.words_space_set:
-            print('has some ''')
             self.words_space_set.remove('')
 
         # use stop_words
